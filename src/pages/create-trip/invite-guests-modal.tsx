@@ -1,5 +1,6 @@
 import { AtSign, Plus, X } from "lucide-react";
 import { FormEvent } from "react";
+
 type InviteGuestsModalProps = {
   closeGuestsModal: () => void;
   emailsToInvite: string[];
