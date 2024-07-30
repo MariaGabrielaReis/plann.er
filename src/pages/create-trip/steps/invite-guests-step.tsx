@@ -1,5 +1,7 @@
 import { ArrowRight, UserRoundPlus } from "lucide-react";
 
+import { Button } from "../../../components/button";
+
 type InviteGuestsStepProps = {
   openGuestsModal: () => void;
   openConfirmTripModal: () => void;
@@ -27,13 +29,10 @@ export function InviteGuestsStep({
 
       <div className="w-px h-4 bg-zinc-800" />
 
-      <button
-        onClick={openConfirmTripModal}
-        className="bg-teal-600 text-zinc-200 rounded px-5 py-2 font-medium flex items-center gap-2 hover:bg-teal-500"
-      >
+      <Button onClick={openConfirmTripModal}>
         Confirmar viagem
         <ArrowRight className="size-5" />
-      </button>
+      </Button>
     </div>
   );
 }
