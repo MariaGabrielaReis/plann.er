@@ -1,9 +1,10 @@
 import { CheckCircle, CircleDashed, UserCog } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { Button } from "../../components/button";
 import { api } from "../../lib/axios";
+import { InviteGuestsModal } from "../create-trip/invite-guests-modal";
 
 type Participant = {
   id: string;
@@ -13,14 +14,59 @@ type Participant = {
 };
 
 export function Guests() {
+  const [isGuestsModalOpen, setIsGuestsModalOpen] = useState(false);
   const { tripId } = useParams();
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [emailsToInvite, setEmailsToInvite] = useState<string[]>([]);
 
   useEffect(() => {
-    api
-      .get(`/trips/${tripId}/participants`)
-      .then(response => setParticipants(response.data.participants));
+    api.get(`/trips/${tripId}/participants`).then(({ data }) => {
+      setParticipants(data.participants),
+        setEmailsToInvite(
+          data.participants.map(
+            (participant: Participant) => participant.email,
+          ),
+        );
+    });
   }, [tripId]);
+
+  function openGuestsModal() {
+    setIsGuestsModalOpen(true);
+  }
+
+  async function inviteNewGuest(email: string) {
+    await api.post(`/trips/${tripId}/invites`, { email });
+  }
+
+  function closeGuestsModal() {
+    const newGuestsEmails = emailsToInvite.filter(
+      invited =>
+        !participants
+          .map((participant: Participant) => participant.email)
+          .includes(invited),
+    );
+    newGuestsEmails.map(email => inviteNewGuest(email));
+
+    window.document.location.reload();
+  }
+
+  function addNewEmailToInvite(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email")?.toString();
+
+    if (!email) return;
+    if (emailsToInvite.includes(email)) return;
+
+    setEmailsToInvite([...emailsToInvite, email]);
+    event.currentTarget.reset();
+  }
+
+  function removeEmailFromInvite(emailToRemove: string) {
+    setEmailsToInvite(
+      emailsToInvite.filter(invited => invited !== emailToRemove),
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -50,10 +96,19 @@ export function Guests() {
         ))}
       </div>
 
-      <Button variant="secondary" size="full">
+      <Button variant="secondary" size="full" onClick={openGuestsModal}>
         <UserCog className="size-5" />
-        Gerenciar convidados
+        Adicionar convidados
       </Button>
+
+      {isGuestsModalOpen && (
+        <InviteGuestsModal
+          addNewEmailToInvite={addNewEmailToInvite}
+          closeGuestsModal={closeGuestsModal}
+          emailsToInvite={emailsToInvite}
+          removeEmailFromInvite={removeEmailFromInvite}
+        />
+      )}
     </div>
   );
 }
