@@ -1,9 +1,10 @@
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { ArrowRight, Calendar, MapPin, Settings2, X } from "lucide-react";
 import { useState } from "react";
 import { DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
-import { format } from "date-fns";
 import { Button } from "../../../components/button";
 
 type DestinationAndDateStepProps = {
@@ -37,9 +38,11 @@ export function DestinationAndDateStep({
     eventStartAndEndDates &&
     eventStartAndEndDates.from &&
     eventStartAndEndDates.to
-      ? format(eventStartAndEndDates.from, "d' de 'LLL")
+      ? format(eventStartAndEndDates.from, "d' de 'LLL", { locale: ptBR })
           .concat(" até ")
-          .concat(format(eventStartAndEndDates.to, "d' de 'LLL"))
+          .concat(
+            format(eventStartAndEndDates.to, "d' de 'LLL", { locale: ptBR }),
+          )
       : null;
 
   return (
@@ -78,6 +81,7 @@ export function DestinationAndDateStep({
 
             <DayPicker
               mode="range"
+              locale={ptBR}
               selected={eventStartAndEndDates}
               onSelect={setEventStartAndEndDates}
               classNames={{

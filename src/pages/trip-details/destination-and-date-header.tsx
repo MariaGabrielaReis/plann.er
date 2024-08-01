@@ -1,9 +1,9 @@
 import { format } from "date-fns";
-import { Calendar, MapPin, Settings2 } from "lucide-react";
+import { ptBR } from "date-fns/locale";
+import { Calendar, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Button } from "../../components/button";
 import { api } from "../../lib/axios";
 
 type Trip = {
@@ -23,9 +23,9 @@ export function DestinationAndDateHeader() {
   }, [tripId]);
 
   const displayedDate = trip
-    ? format(trip.starts_at, "d' de 'LLL")
+    ? format(trip.starts_at, "d' de 'LLL", { locale: ptBR })
         .concat(" até ")
-        .concat(format(trip.ends_at, "d' de 'LLL"))
+        .concat(format(trip.ends_at, "d' de 'LLL", { locale: ptBR }))
     : null;
 
   return (
@@ -35,18 +35,11 @@ export function DestinationAndDateHeader() {
         <span className="text-zinc-100">{trip?.destination}</span>
       </div>
 
-      <div className="flex items-center gap-5">
+      <div className="w-80 flex items-center gap-5">
         <div className="flex items-center gap-2">
           <Calendar className="size-5 text-zinc-400" />
           <span className="text-zinc-100">{displayedDate}</span>
         </div>
-
-        <div className="w-px h-4 bg-zinc-800" />
-
-        <Button variant="secondary">
-          Alterar local / data
-          <Settings2 className="size-5" />
-        </Button>
       </div>
     </div>
   );
