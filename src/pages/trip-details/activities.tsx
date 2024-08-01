@@ -1,6 +1,6 @@
-import { format } from "date-fns";
+import { format, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, CircleDashed } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -14,6 +14,8 @@ type Activity = {
 export function Activities() {
   const { tripId } = useParams();
   const [activities, setActivities] = useState<Activity[]>([]);
+
+  const today = new Date().toString();
 
   useEffect(() => {
     api
@@ -39,7 +41,12 @@ export function Activities() {
               {activityDay.activities.map(activity => (
                 <div key={activity.id} className="space-y-2.5">
                   <div className="px-4 py-2.5 bg-zinc-900 rounded-lg shadow-shape flex items-center gap-3">
-                    <CheckCircle className="size-5 text-teal-300" />
+                    {isAfter(activity.occurs_at, today) ? (
+                      <CircleDashed className="size-5 text-zinc-400" />
+                    ) : (
+                      <CheckCircle className="size-5 text-green-400" />
+                    )}
+
                     <span className="text-zinc-100">{activity.title}</span>
                     <span className="text-zinc-400 text-sm ml-auto">
                       {format(activity.occurs_at, "HH:mm")}
