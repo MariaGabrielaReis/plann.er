@@ -68,6 +68,11 @@ export function Guests() {
     );
   }
 
+  async function confirmGuest(guest: Participant) {
+    await api.patch(`/participants/${guest.id}/confirm`);
+    window.document.location.reload();
+  }
+
   return (
     <div className="space-y-6">
       <h2 className="font-semibold text-xl">Convidados</h2>
@@ -90,7 +95,10 @@ export function Guests() {
             {participant.is_confirmed ? (
               <CheckCircle className="size-5 text-green-400 shrink-0" />
             ) : (
-              <CircleDashed className="size-5 text-zinc-400 shrink-0" />
+              <CircleDashed
+                className="size-5 text-zinc-400 shrink-0 cursor-pointer"
+                onClick={() => confirmGuest(participant)}
+              />
             )}
           </div>
         ))}
